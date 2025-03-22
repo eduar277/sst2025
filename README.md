@@ -55,3 +55,25 @@ python manage.py runserver
 Accede a http://127.0.0.1:8000/ para ver la aplicación en acción.
 
 Estructura del Proyecto
+
+sst2025/
+│── users/ (Manejo de autenticación y permisos)
+│── risks/ (Gestín de riesgos laborales)
+│── notifications/ (Alertas y seguimientos)
+│── djangoProject/ (Configuraciones principales)
+│── manage.py (Comandos de administración de Django)
+│── requirements.txt (Dependencias del proyecto)
+│── README.md (Este archivo)
+
+
+Contribuciones
+
+Haz un fork del repositorio.
+
+Crea una rama nueva (git checkout -b nueva-funcionalidad).
+
+Realiza tus cambios y haz commit (git commit -m "Descripción del cambio").
+
+Sube la rama (git push origin nueva-funcionalidad).
+
+Crea un Pull Request.
