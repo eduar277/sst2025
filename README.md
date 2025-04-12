@@ -1,8 +1,3 @@
-# Proyecto SST 2025 - Seguridad y Salud en el Teletrabajo
-
-Este es un sistema de gestión de Seguridad y Salud en el Trabajo (SST) diseñado para pequeñas empresas que implementan el teletrabajo.
-
-
 # Sistema de Gestión de Riesgos SST - Teletrabajo
 
 Este proyecto es una aplicación web para la gestión de evaluaciones de riesgos laborales en empresas que implementan modalidad de teletrabajo.
