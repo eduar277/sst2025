@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard Administrativo</h2>
+
+<!-- Estadísticas resumen -->
+<div class="row text-center mb-5">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Total de riesgos</h5>
+                <h2>{{ total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>Últimos 30 días</h5>
+                <h2>{{ recientes }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Gráficas -->
+<div class="row">
+    <!-- Riesgos por estado -->
+    <div class="col-md-6 mb-4">
+        <h5 class="text-center">Riesgos por Estado</h5>
+        <canvas id="estadoChart"></canvas>
+    </div>
+
+    <!-- Riesgos por tipo -->
+    <div class="col-md-6 mb-4">
+        <h5 class="text-center">Riesgos por Tipo</h5>
+        <canvas id="factorChart"></canvas>
+    </div>
+</div>
+
+<!-- Botón -->
+<div class="text-center mt-5">
+    <a href="{% url 'todos_riesgos' %}" class="btn btn-primary">Ver todos los riesgos</a>
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const estadoChart = new Chart(document.getElementById('estadoChart'), {
+        type: 'bar',
+        data: {
+            labels: [{% for r in riesgos_estado %}'{{ r.estado|title }}',{% endfor %}],
+            datasets: [{
+                label: 'Cantidad',
+                data: [{% for r in riesgos_estado %}{{ r.total }},{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    });
+
+    const factorChart = new Chart(document.getElementById('factorChart'), {
+        type: 'pie',
+        data: {
+            labels: [{% for f in riesgos_factor %}'{{ f.factor|title }}',{% endfor %}],
+            datasets: [{
+                data: [{% for f in riesgos_factor %}{{ f.total }},{% endfor %}],
+                backgroundColor: ['#f39c12','#e74c3c','#2ecc71','#9b59b6','#3498db']
+            }]
+        },
+        options: {
+            responsive: true
+        }
+    });
+</script>
+{% endblock %}

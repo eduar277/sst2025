@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Empleado{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Bienvenido {{ user.get_full_name }}</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📋 Evaluar un nuevo riesgo</h5>
+                <p class="card-text">Reporta condiciones de riesgo en tu espacio de trabajo.</p>
+                <a href="{% url 'evaluar_riesgo' %}" class="btn btn-primary">Ir al formulario</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow mb-3">
+            <div class="card-body">
+                <h5 class="card-title">📄 Ver mis riesgos</h5>
+                <p class="card-text">Consulta el historial de riesgos reportados y su estado.</p>
+                <a href="{% url 'mis_riesgos' %}" class="btn btn-secondary">Ver historial</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

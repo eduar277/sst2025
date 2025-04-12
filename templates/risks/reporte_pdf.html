@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; font-size: 12px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #444; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        h2 { text-align: center; }
+    </style>
+</head>
+<body>
+    <h2>Reporte de Evaluaciones de Riesgos</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Empleado</th>
+                <th>Factor</th>
+                <th>Descripción</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for riesgo in riesgos %}
+            <tr>
+                <td>{{ riesgo.usuario.get_full_name }}</td>
+                <td>{{ riesgo.get_factor_display }}</td>
+                <td>{{ riesgo.descripcion }}</td>
+                <td>{{ riesgo.fecha|date:"d/m/Y H:i" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay riesgos.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

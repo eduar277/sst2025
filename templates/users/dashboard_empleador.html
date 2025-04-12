@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard Empleador{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Bienvenido {{ user.get_full_name }}</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h5 class="card-title">📊 Ver riesgos reportados</h5>
+                <p class="card-text">Accede al listado completo de evaluaciones enviadas por tus empleados.</p>
+                <a href="{% url 'todos_riesgos' %}" class="btn btn-primary">Ver riesgos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <h5 class="card-title">📄 Exportar a PDF</h5>
+                <p class="card-text">Descarga un informe de todos los riesgos evaluados por tu equipo.</p>
+                <a href="{% url 'exportar_riesgos_pdf' %}" class="btn btn-danger">Exportar</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
