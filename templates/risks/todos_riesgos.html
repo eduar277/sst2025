@@ -20,6 +20,11 @@
     📄 Exportar a PDF
 </a>
 
+<a href="{% url 'exportar_riesgos_excel' %}?{{ request.GET.urlencode }}" class="btn btn-success mb-3 ms-2">
+    📊 Exportar a Excel
+</a>
+
+
 <!-- ✅ Formulario de filtros -->
 <form method="get" class="row g-3 mb-4">
     <div class="col-md-3">

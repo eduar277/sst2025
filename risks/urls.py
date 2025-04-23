@@ -6,6 +6,7 @@ urlpatterns = [
     path('mis/', views.mis_riesgos, name='mis_riesgos'),
     path('todos/', views.listar_todos_los_riesgos, name='todos_riesgos'),
     path('exportar/pdf/', views.exportar_riesgos_pdf, name='exportar_riesgos_pdf'),
+    path('exportar/excel/', views.exportar_riesgos_excel, name='exportar_riesgos_excel'),
 
 
 

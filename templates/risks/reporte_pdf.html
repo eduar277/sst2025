@@ -7,11 +7,13 @@
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #444; padding: 8px; text-align: left; }
         th { background-color: #f2f2f2; }
+        img { max-width: 100px; max-height: 100px; }
         h2 { text-align: center; }
     </style>
 </head>
 <body>
     <h2>Reporte de Evaluaciones de Riesgos</h2>
+
     <table>
         <thead>
             <tr>
@@ -19,6 +21,8 @@
                 <th>Factor</th>
                 <th>Descripción</th>
                 <th>Fecha</th>
+                <th>Estado</th>
+                <th>Imagen</th>
             </tr>
         </thead>
         <tbody>
@@ -28,9 +32,17 @@
                 <td>{{ riesgo.get_factor_display }}</td>
                 <td>{{ riesgo.descripcion }}</td>
                 <td>{{ riesgo.fecha|date:"d/m/Y H:i" }}</td>
+                <td>{{ riesgo.get_estado_display }}</td>
+                <td>
+                    {% if riesgo.imagen %}
+                        <img src="{{ riesgo.imagen.path }}" />
+                    {% else %}
+                        Sin imagen
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
-            <tr><td colspan="4">No hay riesgos.</td></tr>
+            <tr><td colspan="6">No hay riesgos.</td></tr>
             {% endfor %}
         </tbody>
     </table>
