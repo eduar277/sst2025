@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Bienvenido{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center" style="height: 70vh;">
+    <div class="col-md-8 text-center">
+        <h1 class="mb-4 fw-bold">👷‍♂️ Bienvenido al Sistema SST</h1>
+        <p class="lead mb-5">Gestiona los riesgos laborales de manera fácil, rápida y segura.</p>
+
+        {% if not user.is_authenticated %}
+        <div class="d-grid gap-3 d-md-flex justify-content-center">
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+            </a>
+            <a href="{% url 'registro' %}" class="btn btn-outline-success btn-lg">
+                <i class="bi bi-person-plus-fill"></i> Registrarse
+            </a>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            Ya has iniciado sesión como <strong>{{ user.username }}</strong>.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+

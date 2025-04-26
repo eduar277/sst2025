@@ -3,27 +3,147 @@
 {% block title %}Dashboard Empleador{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Bienvenido {{ user.get_full_name }}</h2>
+<h2 class="mb-4 text-center">📊 Panel de Control - Empleador</h2>
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <h5 class="card-title">📊 Ver riesgos reportados</h5>
-                <p class="card-text">Accede al listado completo de evaluaciones enviadas por tus empleados.</p>
-                <a href="{% url 'todos_riesgos' %}" class="btn btn-primary">Ver riesgos</a>
+<!-- Tarjetas de resumen -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Riesgos</h5>
+                <p class="card-text display-6">{{ total }}</p>
             </div>
         </div>
     </div>
 
-    <div class="col-md-6">
-        <div class="card shadow mb-4">
-            <div class="card-body">
-                <h5 class="card-title">📄 Exportar a PDF</h5>
-                <p class="card-text">Descarga un informe de todos los riesgos evaluados por tu equipo.</p>
-                <a href="{% url 'exportar_riesgos_pdf' %}" class="btn btn-danger">Exportar</a>
+    <div class="col-md-4">
+        <div class="card text-white bg-success shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Mitigados</h5>
+                <p class="card-text display-6">
+                    {% for estado in riesgos_estado %}
+                        {% if estado.estado == 'mitigado' %}
+                            {{ estado.total }}
+                        {% endif %}
+                    {% empty %}
+                        0
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card text-white bg-warning shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Pendientes / Revisión</h5>
+                <p class="card-text display-6">
+                    {% with pendientes=0 revision=0 %}
+                        {% for estado in riesgos_estado %}
+                            {% if estado.estado == 'pendiente' %}
+                                {% widthratio estado.total 1 1 as pendientes %}
+                            {% elif estado.estado == 'revision' %}
+                                {% widthratio estado.total 1 1 as revision %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ pendientes|add:revision }}
+                    {% endwith %}
+                </p>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Gráfica de riesgos por estado -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        📊 Riesgos por Estado
+    </div>
+    <div class="card-body">
+        <canvas id="graficaEstados" height="100"></canvas>
+    </div>
+</div>
+
+<!-- Acciones rápidas -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">📄 Ver Riesgos Reportados</h5>
+                <p class="card-text">Accede a la lista completa de riesgos reportados.</p>
+                <a href="{% url 'todos_riesgos' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-list-ul"></i> Ver Listado
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">📥 Exportar Reportes</h5>
+                <p class="card-text">Descarga los riesgos en formato PDF o Excel.</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-center">
+                    <a href="{% url 'exportar_riesgos_pdf' %}" class="btn btn-outline-danger">
+                        <i class="bi bi-file-earmark-pdf"></i> PDF
+                    </a>
+                    <a href="{% url 'exportar_riesgos_excel' %}" class="btn btn-outline-success">
+                        <i class="bi bi-file-earmark-excel"></i> Excel
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para Chart.js -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('graficaEstados').getContext('2d');
+
+    var graficaEstados = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Pendientes', 'En Revisión', 'Mitigados'],
+            datasets: [{
+                label: 'Cantidad de Riesgos',
+                data: [
+                    {% for estado in riesgos_estado %}
+                        {% if estado.estado == 'pendiente' %}{{ estado.total }},
+                        {% elif estado.estado == 'revision' %}{{ estado.total }},
+                        {% elif estado.estado == 'mitigado' %}{{ estado.total }},
+                        {% endif %}
+                    {% empty %}
+                        0, 0, 0
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(23, 162, 184, 0.7)',
+                    'rgba(40, 167, 69, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(40, 167, 69, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+});
+</script>
+
 {% endblock %}
+
+

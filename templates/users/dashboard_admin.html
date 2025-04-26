@@ -1,83 +1,152 @@
 {% extends 'base.html' %}
 
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Dashboard Administrador{% endblock %}
 
 {% block content %}
-<h2 class="mb-4">Dashboard Administrativo</h2>
+<h2 class="mb-4 text-center">📊 Panel de Control - Administrador</h2>
 
-<!-- Estadísticas resumen -->
-<div class="row text-center mb-5">
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h5>Total de riesgos</h5>
-                <h2>{{ total }}</h2>
+<!-- Tarjetas de resumen -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Riesgos</h5>
+                <p class="card-text display-6">{{ total }}</p>
             </div>
         </div>
     </div>
-    <div class="col-md-4">
-        <div class="card shadow">
-            <div class="card-body">
-                <h5>Últimos 30 días</h5>
-                <h2>{{ recientes }}</h2>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Recientes (30 días)</h5>
+                <p class="card-text display-6">{{ recientes }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">En Revisión</h5>
+                <p class="card-text display-6">
+                    {% for estado in riesgos_estado %}
+                        {% if estado.estado == 'revision' %}
+                            {{ estado.total }}
+                        {% endif %}
+                    {% empty %}
+                        0
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info shadow h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Pendientes</h5>
+                <p class="card-text display-6">
+                    {% for estado in riesgos_estado %}
+                        {% if estado.estado == 'pendiente' %}
+                            {{ estado.total }}
+                        {% endif %}
+                    {% empty %}
+                        0
+                    {% endfor %}
+                </p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Gráficas -->
-<div class="row">
-    <!-- Riesgos por estado -->
-    <div class="col-md-6 mb-4">
-        <h5 class="text-center">Riesgos por Estado</h5>
-        <canvas id="estadoChart"></canvas>
+<!-- Gráfica de riesgos por estado -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-primary text-white">
+        📊 Riesgos por Estado
     </div>
-
-    <!-- Riesgos por tipo -->
-    <div class="col-md-6 mb-4">
-        <h5 class="text-center">Riesgos por Tipo</h5>
-        <canvas id="factorChart"></canvas>
+    <div class="card-body">
+        <canvas id="graficaEstados" height="100"></canvas>
     </div>
 </div>
 
-<!-- Botón -->
-<div class="text-center mt-5">
-    <a href="{% url 'todos_riesgos' %}" class="btn btn-primary">Ver todos los riesgos</a>
+<!-- Tabla resumen de riesgos por factor -->
+<div class="card shadow mb-4">
+    <div class="card-header bg-success text-white">
+        <i class="bi bi-bar-chart-line"></i> Riesgos Reportados por Factor
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered text-center">
+                <thead class="table-light">
+                    <tr>
+                        <th>Factor</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for factor in riesgos_factor %}
+                    <tr>
+                        <td>{{ factor.factor }}</td>
+                        <td>{{ factor.total }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="2">No hay datos suficientes.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Script para Chart.js -->
 <script>
-    const estadoChart = new Chart(document.getElementById('estadoChart'), {
+document.addEventListener('DOMContentLoaded', function() {
+    var ctx = document.getElementById('graficaEstados').getContext('2d');
+
+    var graficaEstados = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: [{% for r in riesgos_estado %}'{{ r.estado|title }}',{% endfor %}],
+            labels: ['Pendientes', 'En Revisión', 'Mitigados'],
             datasets: [{
-                label: 'Cantidad',
-                data: [{% for r in riesgos_estado %}{{ r.total }},{% endfor %}],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                label: 'Cantidad de Riesgos',
+                data: [
+                    {% for estado in riesgos_estado %}
+                        {% if estado.estado == 'pendiente' %}{{ estado.total }},
+                        {% elif estado.estado == 'revision' %}{{ estado.total }},
+                        {% elif estado.estado == 'mitigado' %}{{ estado.total }},
+                        {% endif %}
+                    {% empty %}
+                        0, 0, 0
+                    {% endfor %}
+                ],
+                backgroundColor: [
+                    'rgba(255, 193, 7, 0.7)',
+                    'rgba(23, 162, 184, 0.7)',
+                    'rgba(40, 167, 69, 0.7)'
+                ],
+                borderColor: [
+                    'rgba(255, 193, 7, 1)',
+                    'rgba(23, 162, 184, 1)',
+                    'rgba(40, 167, 69, 1)'
+                ],
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            plugins: {
-                legend: { display: false }
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
             }
         }
     });
-
-    const factorChart = new Chart(document.getElementById('factorChart'), {
-        type: 'pie',
-        data: {
-            labels: [{% for f in riesgos_factor %}'{{ f.factor|title }}',{% endfor %}],
-            datasets: [{
-                data: [{% for f in riesgos_factor %}{{ f.total }},{% endfor %}],
-                backgroundColor: ['#f39c12','#e74c3c','#2ecc71','#9b59b6','#3498db']
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
+});
 </script>
+
 {% endblock %}

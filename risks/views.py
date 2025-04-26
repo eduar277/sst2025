@@ -11,6 +11,8 @@ from django.http import HttpResponse
 import openpyxl
 from openpyxl.utils import get_column_letter
 
+from notifications.models import Notification  # ✅ Importar para crear notificaciones
+
 @login_required
 def evaluar_riesgo(request):
     if request.method == 'POST':
@@ -59,6 +61,14 @@ def actualizar_estado_riesgo(request, riesgo_id):
         if nuevo_estado in dict(RiskEvaluation.ESTADOS):
             riesgo.estado = nuevo_estado
             riesgo.save()
+
+            # ✅ Crear notificación automática al empleado
+            mensaje = f"El estado de tu evaluación de riesgo sobre '{riesgo.get_factor_display()}' ha cambiado a '{riesgo.get_estado_display()}'."
+            Notification.objects.create(
+                usuario=riesgo.usuario,
+                mensaje=mensaje
+            )
+
             messages.success(request, f"Estado actualizado a '{riesgo.get_estado_display()}' para {riesgo.usuario.get_full_name()}")
     return redirect('todos_riesgos')
 
@@ -136,3 +146,4 @@ def exportar_riesgos_excel(request):
     response['Content-Disposition'] = 'attachment; filename="riesgos_reportados.xlsx"'
     wb.save(response)
     return response
+

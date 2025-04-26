@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Notificaciones{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">🔔 Mis Notificaciones</h2>
+
+{% if notificaciones %}
+    <div class="list-group">
+        {% for notificacion in notificaciones %}
+            <div class="list-group-item d-flex justify-content-between align-items-center 
+                        {% if not notificacion.leida %}list-group-item-warning{% endif %}">
+                <div>
+                    <p class="mb-1">{{ notificacion.mensaje }}</p>
+                    <small class="text-muted">{{ notificacion.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                </div>
+                {% if not notificacion.leida %}
+                    <form method="post" action="{% url 'marcar_notificacion_leida' notificacion.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-primary">Marcar como leída</button>
+                    </form>
+                {% else %}
+                    <span class="badge bg-success">Leída</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        No tienes notificaciones por el momento.
+    </div>
+{% endif %}
+
+<a href="{% url 'dashboard_admin' %}" class="btn btn-secondary mt-4">← Volver al Dashboard</a>
+{% endblock %}

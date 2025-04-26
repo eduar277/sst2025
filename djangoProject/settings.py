@@ -49,6 +49,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
+                # ✅ Context Processor personalizado para notificaciones
+                'users.context_processors.notificaciones_context',
             ],
         },
     },
@@ -107,4 +110,5 @@ LOGOUT_REDIRECT_URL = '/usuarios/login/'
 
 # Campo primario automático por defecto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 
